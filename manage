@@ -1,0 +1,110 @@
+#!/usr/bin/env perl
+use strict;
+use warnings;
+use Term::ANSIColor;
+use File::Spec::Functions qw(catfile);
+use Cwd                   qw(getcwd);
+use File::Path            qw(remove_tree);
+use POSIX ":sys_wait_h";
+
+sub info {
+    print color('green'), "[INFO] ", color('white'), "@_\n", color('reset');
+}
+
+sub warn {
+    print color('yellow'), "[WARNING] ", color('white'), "@_\n", color('reset');
+}
+
+sub error {
+    print STDERR color('red'), "[ERROR] ", color('white'), "@_\n",
+      color('reset');
+}
+sub diex { error(@_); exit 1 }
+
+sub run {
+    my ( $cmd, $dir ) = @_;
+    $dir ||= '.';
+    info "($dir) $cmd";
+    my $pid = fork();
+    $pid == 0 ? ( chdir $dir && exec "sh", "-c", $cmd ) : waitpid( $pid, 0 );
+    return $? >> 8;
+}
+
+sub boot {
+    info "Bootstrapping project...";
+    my @dirs = ( '.', 'src' );
+    my $os   = $^O;
+    my $cmd  = 'autoreconf -i';
+
+    if ( $os eq 'MSWin32' ) {
+        my $ac = $ENV{ACLOCAL_PATH} // '';
+        $ac =~ s/;/:/g;
+        $ac =~ s|\\|/|g;
+        $ac =~ s|([A-Za-z]):/|/$1/|g;
+        $cmd = "ACLOCAL_PATH=$ac autoreconf -i";
+    }
+
+    if ( $os eq 'darwin' ) {
+        info "Detected macOS, running aclocal + automake...";
+        run("aclocal") == 0 or diex "aclocal failed";
+        for my $d (@dirs) {
+            -f catfile( $d, "configure.ac" )
+              and run( "automake --add-missing", $d ) != 0
+              and diex "automake failed";
+        }
+    }
+
+    my $fail = 0;
+    for my $d (@dirs) {
+        next unless -f catfile( $d, "configure.ac" );
+        info "Running autoreconf in $d";
+        my $code = run( $cmd, $d );
+        $fail ||= $code != 0;
+    }
+    $fail
+      ? diex "Autoreconf failed"
+      : info "Autoreconf completed successfully.";
+}
+
+sub clean {
+    info "Cleaning project...";
+    my @dirs =
+      qw(autom4te.cache config.log config.status Makefile Makefile.in src/.deps src/Makefile src/Makefile.in tests/.deps tests/Makefile tests/Makefile.in configure config aclocal.m4);
+
+    if ( -e "Makefile" ) {
+        info "Running make clean...";
+        system( "make", "clean" );
+    }
+
+    for my $d (@dirs) {
+        if ( -e $d ) {
+            if   ( -d $d ) { remove_tree($d) }
+            else           { unlink $d }
+            info "Removed $d";
+        }
+    }
+    info "Cleanup complete.";
+}
+
+sub build {
+    info "Configuring & building project...";
+    run("./configure") == 0 or diex "configure failed";
+    run("make") == 0        or diex "make failed";
+    info "Build complete.";
+}
+
+sub check {
+    info "Running tests...";
+    run("make check") == 0 or diex "test failed";
+    info "Test complete.";
+}
+
+sub rebuild { clean(); build(); }
+
+my $cmd = shift // 'boot';
+if    ( $cmd eq 'boot' )    { boot() }
+elsif ( $cmd eq 'clean' )   { clean() }
+elsif ( $cmd eq 'build' )   { build() }
+elsif ( $cmd eq 'check' )   { check() }
+elsif ( $cmd eq 'rebuild' ) { rebuild() }
+else { diex "Unknown command: $cmd\nUsage: $0 [boot|clean|build|rebuild]" }

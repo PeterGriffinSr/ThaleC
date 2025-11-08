@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y autoconf automake libtool make gcc perl
+
+    - name: Set up dependencies (Mac)
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+        brew install gcc autoconf automake perl
+
+    - name: Set up MSYS2 and dependencies (Windows)
+      if: runner.os == 'Windows'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          base-devel
+          autotools
+          libtool
+          make
+          perl
+          mingw-w64-x86_64-gcc
+        update: true
+
+    - name: Bootstrap the build system (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        perl manage boot 
+
+    - name: Bootstrap the build system (Mac)
+      if: runner.os == 'macOS'
+      run: |
+        perl manage boot
+
+    - name: Bootstrap the build system (Windows)
+      if: runner.os == 'Windows'
+      shell: msys2 {0}
+      run: |
+        perl manage boot
+
+    - name: Configure the project (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        perl manage build
+
+    - name: Configure the project (Mac)
+      if: runner.os == 'macOS'
+      run: |
+        ./configure CC=gcc --host=gcc
+
+    - name: Configure the project (Windows)
+      if: runner.os == 'Windows'
+      shell: msys2 {0}
+      run: |
+        perl manage build
+
+    - name: Build the project (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        perl manage check
+
+    - name: Build the project (Mac)
+      if: runner.os == 'macOS'
+      run: |
+        perl manage check
+
+    - name: Build the project (Windows)
+      if: runner.os == 'Windows'
+      shell: msys2 {0}
+      run: |
+         perl manage check

@@ -1,0 +1,43 @@
+.TH THALE 1 "1.0" "General Command Manual"
+.SH NAME
+thale \- a purely functional, compiled programming language
+.SH SYNOPSIS
+.B Thale
+is a compiled, purely functional programming language. For an introduction to programming in Thale, see the Thale Tutorial. The Thale Library Reference docuements built-in and standard types, constants, functions and modules. The Thale Reference Manual describes the syntax and semantics of the core language in (perhaps too) much detail. (These documents may be located via the
+.B INTERNET RESOURCES
+below; they may be installed on your system as well.)
+
+Thale can be extended with your own libraries written in C. On most systems such modules may be dynamically loaded.
+
+Documentation for installed Thale packages can be viewed by running the
+.B thdoc
+program.
+.SH COMMAND LINE OPTIONS
+.B -h, -?, --help,
+    Prints the usage for the compiler and exits.
+
+.B -v, -vv, --version,
+    Prints the Thale version number of the executable and exits. When given twice, prints more infomation about the build.
+
+.B -save-temps,
+    Do not delete intermediate files.
+
+.B -S, --compile-only,
+    Compile only; do not assemble or link.
+
+.B -c, --compile-assemble,
+    Compile and assemble, but do not link.
+
+.B -o, --output=
+.I file
+    Place that output into
+.I file
+
+.SH INTERNET RESOURCES
+    Main website: https://example.com/
+    Documentation: https://docs.example.com/
+    Downloads: https://download.example.com/
+
+.SH LICENSING
+Thale is distributed under an Open Source license. See the file "LICENSE" in 
+the Thale source distribution for information on terms & conditions for accessing and otherwise using Python and for a DISCLAIMER OF ALL WARRANTIES.

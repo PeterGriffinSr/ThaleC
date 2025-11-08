@@ -1,0 +1,36 @@
+# === System-generated files ===
+Thumbs.db
+.DS_Store
+
+# === Editor & IDE files ===
+*~
+*#
+#*#
+
+# === Build artifacts ===
+!*.c
+!*.h
+!*.md
+!*.txt
+!*.thl
+!.gitkeep
+!*/
+*.exe
+*.o
+*.a
+*.in
+
+# === Build system caches ===
+autom4te.cache/
+.cache/
+.deps/
+.vscode/
+latex/
+*.dirstamp
+configure
+aclocal.m4
+
+# === Logs & Temporary files ===
+*.log
+*.status
+*.trs
