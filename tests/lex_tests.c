@@ -71,7 +71,7 @@ void test_keyword(void)
 {
     Lex lex;
     Token token;
-    const char *keywords[] = {"char", "false", "float", "int", "let", "list", "match", "true", "type", "unit", "with"};
+    const char *keywords[] = {"Char", "False", "Float", "Int", "let", "List", "match", "True", "type", "Unit", "with", "String"};
     TokenType expectedTokens[] = {Char,
                                   False,
                                   Float,
@@ -82,7 +82,8 @@ void test_keyword(void)
                                   True,
                                   Type,
                                   Unit,
-                                  With};
+                                  With,
+                                  String};
     size_t num = sizeof(keywords) / sizeof(keywords[0]);
 
     for (size_t i = 0; i < num; ++i)
