@@ -37,6 +37,7 @@ typedef enum
     StringLiteral,
     CharLiteral,
     Char,
+    String,
     False,
     Float,
     Int,
@@ -47,6 +48,7 @@ typedef enum
     Type,
     Unit,
     With,
+    Effect,
     Unknown,
     Eof
 } TokenType;

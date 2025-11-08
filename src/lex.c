@@ -4,7 +4,7 @@
 #include "lex.h"
 
 static const KeywordEntry kw[] = {
-    {"char", Char}, {"false", False}, {"float", Float}, {"int", Int}, {"let", Let}, {"list", List}, {"match", Match}, {"true", True}, {"type", Type}, {"unit", Unit}, {"with", With}};
+    {"Char", Char}, {"False", False}, {"Float", Float}, {"Int", Int}, {"let", Let}, {"List", List}, {"match", Match}, {"True", True}, {"type", Type}, {"Unit", Unit}, {"with", With}, {"String", String}, {"effect", Effect}};
 
 static TokenType checkKeyword(const char *start, size_t length)
 {
