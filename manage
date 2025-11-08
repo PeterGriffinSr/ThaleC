@@ -69,7 +69,7 @@ sub boot {
 sub clean {
     info "Cleaning project...";
     my @dirs =
-      qw(autom4te.cache config.log config.status Makefile Makefile.in src/.deps src/Makefile src/Makefile.in tests/.deps tests/Makefile tests/Makefile.in configure config aclocal.m4);
+      qw(autom4te.cache config.log config.status Makefile Makefile.in src/.deps src/Makefile src/Makefile.in tests/.deps tests/Makefile tests/Makefile.in configure config/compile config/depcomp config/install-sh config/missing config/test-driver aclocal.m4);
 
     if ( -e "Makefile" ) {
         info "Running make clean...";
