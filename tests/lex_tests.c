@@ -63,7 +63,7 @@ void test_operator(void)
         token = getNextToken(&lex);
 
         assert(token.typ == expectedTokens[i]);
-        assert(strncmp(token.start, input, token.length) == 0);
+        assert(strncmp(token.start, input, (unsigned int)token.length) == 0);
     }
 }
 

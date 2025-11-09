@@ -74,7 +74,7 @@ static inline Token makeToken(TokenType type, char *start, Lex lex)
         .column = lex.column};
 }
 
-static Token parseIdentifier(Lex *lex, char first)
+static Token parseIdentifier(Lex *lex)
 {
     char *start = lex->current - 1;
     while (isalnum(*lex->current) || *lex->current == '_')
@@ -86,7 +86,7 @@ static Token parseIdentifier(Lex *lex, char first)
     return makeToken(type, start, *lex);
 }
 
-static Token parseNumber(Lex *lex, char first)
+static Token parseNumber(Lex *lex)
 {
     char *start = lex->current - 1;
     while (isdigit(*lex->current))
@@ -114,7 +114,6 @@ static Token parseNumber(Lex *lex, char first)
 static Token parseString(Lex *lex)
 {
     char *start = lex->current - 1;
-    int start_col = lex->column - 1;
 
     while (*lex->current && *lex->current != '"')
     {
@@ -180,7 +179,6 @@ static Token parseString(Lex *lex)
 static Token parseChar(Lex *lex)
 {
     char *start = lex->current - 1;
-    int start_col = lex->column - 1;
 
     if (*lex->current == '\\')
     {
@@ -329,9 +327,9 @@ Token getNextToken(Lex *lex)
     lex->column++;
 
     if (isalpha(c) || c == '_')
-        return parseIdentifier(lex, c);
+        return parseIdentifier(lex);
     if (isdigit(c))
-        return parseNumber(lex, c);
+        return parseNumber(lex);
     if (c == '"')
         return parseString(lex);
     if (c == '\'')
