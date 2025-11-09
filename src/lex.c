@@ -311,7 +311,7 @@ static Token parseSymbol(Lex *lex, char c)
             return makeToken(LogicalOr, start, *lex);
         }
         return makeToken(Pipe, start, *lex);
-    default:
+    default:;
         Token tok = makeToken(Unknown, start, *lex);
         reportError(LexicalError, "Unknown symbol", lex, &tok);
         return tok;
