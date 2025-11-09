@@ -1,7 +1,8 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
-#include "lex.h"
+#include <stdio.h>
+#include "error.h"
 
 static const KeywordEntry kw[] = {
     {"Char", Char}, {"False", False}, {"Float", Float}, {"Int", Int}, {"let", Let}, {"List", List}, {"match", Match}, {"True", True}, {"type", Type}, {"Unit", Unit}, {"with", With}, {"String", String}, {"effect", Effect}};
@@ -70,8 +71,7 @@ static inline Token makeToken(TokenType type, char *start, Lex lex)
         .start = start,
         .length = (int)(lex.current - start),
         .line = lex.line,
-        .column = (int)(start - lex.start) + 1
-    };
+        .column = lex.column};
 }
 
 static Token parseIdentifier(Lex *lex, char first)
@@ -113,45 +113,124 @@ static Token parseNumber(Lex *lex, char first)
 
 static Token parseString(Lex *lex)
 {
-    char *start = lex->current;
+    char *start = lex->current - 1;
+    int start_col = lex->column - 1;
+
     while (*lex->current && *lex->current != '"')
     {
-        if (*lex->current == '\\' && lex->current[1])
+        if (*lex->current == '\\')
+        {
+            lex->current++;
+            lex->column++;
+
+            switch (*lex->current)
+            {
+            case 'n':
+            case 't':
+            case 'r':
+            case '\\':
+            case '"':
+                break;
+
+            default:
+                if (*lex->current)
+                {
+                    Token tok;
+                    tok.typ = Unknown;
+                    tok.start = lex->current - 1;
+                    tok.length = 1;
+                    tok.line = lex->line;
+                    tok.column = lex->column - 1;
+
+                    char msg[64];
+                    snprintf(msg, sizeof(msg),
+                             "Invalid escape sequence in string");
+                    reportError(LexicalError, msg, lex, &tok);
+                }
+                break;
+            }
+        }
+
+        if (*lex->current == '\n')
+        {
+            Token tok = makeToken(Unknown, start, *lex);
+            reportError(LexicalError, "Unterminated string literal", lex, &tok);
+            return tok;
+        }
+
+        if (*lex->current)
         {
             lex->current++;
             lex->column++;
         }
-        lex->current++;
-        lex->column++;
     }
 
     if (*lex->current == '"')
     {
         lex->current++;
         lex->column++;
-        return makeToken(StringLiteral, start - 1, *lex);
+        return makeToken(StringLiteral, start, *lex);
     }
 
-    return makeToken(Unknown, start - 1, *lex);
+    Token tok = makeToken(Unknown, start, *lex);
+    reportError(LexicalError, "Unterminated string literal", lex, &tok);
+    return tok;
 }
 
 static Token parseChar(Lex *lex)
 {
-    char *start = lex->current;
+    char *start = lex->current - 1;
+    int start_col = lex->column - 1;
+
     if (*lex->current == '\\')
     {
         lex->current++;
         lex->column++;
+
+        switch (*lex->current)
+        {
+        case 'n':
+        case 't':
+        case 'r':
+        case '\\':
+        case '\'':
+            break;
+
+        default:
+            if (*lex->current)
+            {
+                Token tok;
+                tok.typ = Unknown;
+                tok.start = lex->current - 1;
+                tok.length = 1;
+                tok.line = lex->line;
+                tok.column = lex->column - 1;
+
+                char msg[64];
+                snprintf(msg, sizeof(msg),
+                         "Invalid escape sequence in char literal");
+                reportError(LexicalError, msg, lex, &tok);
+            }
+            break;
+        }
     }
-    lex->current++;
-    lex->column++;
+
+    if (*lex->current)
+    {
+        lex->current++;
+        lex->column++;
+    }
+
     if (*lex->current == '\'')
     {
         lex->current++;
         lex->column++;
         return makeToken(CharLiteral, start - 1, *lex);
     }
-    return makeToken(Unknown, start - 1, *lex);
+
+    Token tok = makeToken(Unknown, start, *lex);
+    reportError(LexicalError, "Unterminated char literal", lex, &tok);
+    return tok;
 }
 
 static Token parseSymbol(Lex *lex, char c)
@@ -233,7 +312,9 @@ static Token parseSymbol(Lex *lex, char c)
         }
         return makeToken(Pipe, start, *lex);
     default:
-        return makeToken(Unknown, start, *lex);
+        Token tok = makeToken(Unknown, start, *lex);
+        reportError(LexicalError, "Unknown symbol", lex, &tok);
+        return tok;
     }
 }
 

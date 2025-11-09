@@ -96,11 +96,81 @@ void test_keyword(void)
     }
 }
 
+void test_string(void)
+{
+    Lex lex;
+    Token token;
+    const char *inputs[] = {
+        "\"hello\"", "\"world!\"", "\"\"", "\"123\"", "\"string with spaces\""};
+    size_t numInputs = sizeof(inputs) / sizeof(inputs[0]);
+
+    for (size_t i = 0; i < numInputs; ++i)
+    {
+        initLex(&lex, (char *)inputs[i]);
+        token = getNextToken(&lex);
+        assert(token.typ == StringLiteral);
+        assert(token.length >= 2);
+        token = getNextToken(&lex);
+        assert(token.typ == Eof);
+    }
+}
+
+void test_comment(void)
+{
+    Lex lex;
+    Token token;
+    const char *inputs[] = {
+        "-- comment", "-- another comment with symbols!@#"};
+    for (size_t i = 0; i < sizeof(inputs) / sizeof(inputs[0]); ++i)
+    {
+        initLex(&lex, (char *)inputs[i]);
+        token = getNextToken(&lex);
+        assert(token.typ == Eof);
+    }
+}
+
+void test_mixed_sequence(void)
+{
+    Lex lex;
+    Token token;
+    const char *input = "let x = 42 + 3.14";
+    initLex(&lex, (char *)input);
+
+    TokenType expected[] = {
+        Let, Identifier, Assign, IntLiteral, Plus, FloatLiteral, Eof};
+    for (size_t i = 0;; ++i)
+    {
+        token = getNextToken(&lex);
+        assert(token.typ == expected[i]);
+        if (expected[i] == Eof)
+            break;
+    }
+}
+
+void test_char(void)
+{
+    Lex lex;
+    Token token;
+    const char *inputs[] = {"'a'", "'\\n'", "'\\t'", "'\\''", "'\\\\'"};
+    for (size_t i = 0; i < sizeof(inputs) / sizeof(inputs[0]); ++i)
+    {
+        initLex(&lex, (char *)inputs[i]);
+        token = getNextToken(&lex);
+        assert(token.typ == CharLiteral);
+        token = getNextToken(&lex);
+        assert(token.typ == Eof);
+    }
+}
+
 int main(void)
 {
     test_identifier();
     test_operator();
     test_number();
     test_keyword();
+    test_string();
+    test_comment();
+    test_mixed_sequence();
+    test_char();
     return EXIT_SUCCESS;
 }

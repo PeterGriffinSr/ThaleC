@@ -3,40 +3,69 @@ use strict;
 use warnings;
 use Term::ANSIColor;
 use File::Spec::Functions qw(catfile);
-use Cwd                   qw(getcwd);
 use File::Path            qw(remove_tree);
 use POSIX ":sys_wait_h";
+use Getopt::Long;
+use Cwd qw(getcwd);
 
-sub info {
-    print color('green'), "[INFO] ", color('white'), "@_\n", color('reset');
+my $VERBOSE = 0;
+GetOptions( "verbose" => \$VERBOSE );
+
+my $start_time = time();
+my $cwd        = getcwd();
+
+sub timestamp {
+    my @t = localtime();
+    return sprintf( "[%02d:%02d:%02d]", $t[2], $t[1], $t[0] );
 }
 
-sub warn {
-    print color('yellow'), "[WARNING] ", color('white'), "@_\n", color('reset');
+sub log_line {
+    my ( $color, $tag, $msg ) = @_;
+    print color($color), sprintf( "%s %-10s", timestamp(), "[$tag]" ),
+      color('white'), " $msg\n", color('reset');
 }
 
-sub error {
-    print STDERR color('red'), "[ERROR] ", color('white'), "@_\n",
-      color('reset');
+sub info  { log_line( 'green',  'INFO',  "@_" ); }
+sub warn  { log_line( 'yellow', 'WARN',  "@_" ); }
+sub error { log_line( 'red',    'ERROR', "@_" ); }
+sub diex  { error(@_); exit 1 }
+
+sub section {
+    my ($title) = @_;
+    print color('cyan'), "\n=== $title ===\n", color('reset');
 }
-sub diex { error(@_); exit 1 }
 
 sub run {
     my ( $cmd, $dir ) = @_;
     $dir ||= '.';
-    info "($dir) $cmd";
+
+    info "($dir) $cmd" if $VERBOSE;
     my $pid = fork();
-    $pid == 0 ? ( chdir $dir && exec "sh", "-c", $cmd ) : waitpid( $pid, 0 );
-    return $? >> 8;
+
+    if ( $pid == 0 ) {
+        chdir $dir or diex "Failed to cd into $dir: $!";
+        exec "sh", "-c", $cmd or diex "Exec failed: $!";
+    }
+
+    waitpid( $pid, 0 );
+    my $exit = $? >> 8;
+
+    if ( $exit != 0 ) {
+        error "Command failed: $cmd (exit code $exit)";
+        exit $exit;
+    }
+
+    return $exit;
 }
 
 sub boot {
-    info "Bootstrapping project...";
+    section "Bootstrapping Project";
     my @dirs = ( '.', 'src' );
     my $os   = $^O;
     my $cmd  = 'autoreconf -i';
 
     if ( $os eq 'MSWin32' ) {
+        info "Detected Windows environment";
         my $ac = $ENV{ACLOCAL_PATH} // '';
         $ac =~ s/;/:/g;
         $ac =~ s|\\|/|g;
@@ -45,66 +74,88 @@ sub boot {
     }
 
     if ( $os eq 'darwin' ) {
-        info "Detected macOS, running aclocal + automake...";
-        run("aclocal") == 0 or diex "aclocal failed";
+        info "Detected macOS, performing additional setup...";
+        run("aclocal");
         for my $d (@dirs) {
-            -f catfile( $d, "configure.ac" )
-              and run( "automake --add-missing", $d ) != 0
-              and diex "automake failed";
+            if ( -f catfile( $d, "configure.ac" ) ) {
+                run( "automake --add-missing", $d );
+            }
         }
     }
 
     my $fail = 0;
     for my $d (@dirs) {
         next unless -f catfile( $d, "configure.ac" );
-        info "Running autoreconf in $d";
+        info "Running autoreconf in $d...";
         my $code = run( $cmd, $d );
         $fail ||= $code != 0;
     }
+
     $fail
       ? diex "Autoreconf failed"
       : info "Autoreconf completed successfully.";
 }
 
 sub clean {
-    info "Cleaning project...";
-    my @dirs =
-      qw(autom4te.cache config.log config.status Makefile Makefile.in src/.deps src/Makefile src/Makefile.in tests/.deps tests/Makefile tests/Makefile.in configure config/compile config/depcomp config/install-sh config/missing config/test-driver aclocal.m4);
+    section "Cleaning Project";
+    my @targets = qw(
+      autom4te.cache config.log config.status Makefile Makefile.in
+      src/.deps src/Makefile src/Makefile.in
+      tests/.deps tests/Makefile tests/Makefile.in
+      configure aclocal.m4
+      config/compile config/depcomp config/install-sh config/missing config/test-driver
+    );
 
     if ( -e "Makefile" ) {
         info "Running make clean...";
         system( "make", "clean" );
     }
 
-    for my $d (@dirs) {
-        if ( -e $d ) {
-            if   ( -d $d ) { remove_tree($d) }
-            else           { unlink $d }
-            info "Removed $d";
-        }
+    for my $t (@targets) {
+        next unless -e $t;
+        if   ( -d $t ) { remove_tree($t); }
+        else           { unlink $t; }
+        info "Removed $t" if $VERBOSE;
     }
+
     info "Cleanup complete.";
 }
 
 sub build {
-    info "Configuring & building project...";
-    run("./configure") == 0 or diex "configure failed";
-    run("make") == 0        or diex "make failed";
+    section "Building Project";
+    run("./configure");
+    run("make");
     info "Build complete.";
 }
 
 sub check {
-    info "Running tests...";
-    run("make check") == 0 or diex "test failed";
-    info "Test complete.";
+    section "Running Tests";
+    run("make check");
+    info "All tests passed.";
 }
 
-sub rebuild { clean(); build(); }
+sub rebuild {
+    section "Full Rebuild";
+    clean();
+    build();
+}
+
+my %commands = (
+    boot    => \&boot,
+    clean   => \&clean,
+    build   => \&build,
+    check   => \&check,
+    rebuild => \&rebuild,
+);
 
 my $cmd = shift // 'boot';
-if    ( $cmd eq 'boot' )    { boot() }
-elsif ( $cmd eq 'clean' )   { clean() }
-elsif ( $cmd eq 'build' )   { build() }
-elsif ( $cmd eq 'check' )   { check() }
-elsif ( $cmd eq 'rebuild' ) { rebuild() }
-else { diex "Unknown command: $cmd\nUsage: $0 [boot|clean|build|rebuild]" }
+if ( exists $commands{$cmd} ) {
+    $commands{$cmd}->();
+}
+else {
+    diex
+"Unknown command: '$cmd'\nUsage: $0 [boot|clean|build|check|rebuild] [--verbose]";
+}
+
+my $elapsed = time() - $start_time;
+info sprintf( "Completed in %ds", $elapsed );
