@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "include/lex_tests.h"
-#include "../src/include/lex.h"
+#include "../source/include/lex.h"
 
 void test_identifier(void)
 {

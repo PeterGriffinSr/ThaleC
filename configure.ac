@@ -32,5 +32,5 @@ AS_IF([test "x$enable_debug" = "xyes"],
 AC_SUBST([CFLAGS])
 AC_SUBST([LDFLAGS])
 
-AC_CONFIG_FILES([Makefile src/Makefile tests/Makefile])
+AC_CONFIG_FILES([Makefile source/Makefile tests/Makefile])
 AC_OUTPUT
