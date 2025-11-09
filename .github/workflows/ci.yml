@@ -15,11 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        shell: [bash]
-
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
 
     steps:
       - name: Checkout repository
@@ -27,12 +22,9 @@ jobs:
 
       - name: Set up dependencies
         run: |
-          if [[ "${{ runner.os }}" == "Linux" ]]; then
-            sudo apt-get update
-            sudo apt-get install -y autoconf automake libtool make gcc perl
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
             brew update
-            brew install gcc autoconf automake perl
+            brew install autoconf automake
           fi
         shell: bash
 
@@ -50,11 +42,15 @@ jobs:
             clang
           update: true
 
-      - name: Bootstrap the project
-        run: perl manage boot
+      - name: Build and Test Project (Windows)
+        shell: msys2 {0}
+        run: |
+          perl manage boot
+          perl manage build
+          perl manage check
 
-      - name: Configure the project
-        run: perl manage build
-
-      - name: Run tests
-        run: perl manage check
+      - name: Build and Test Project
+        run: |
+          perl manage boot
+          perl manage build
+          perl manage check
