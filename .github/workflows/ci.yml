@@ -40,6 +40,7 @@ jobs:
             make
             perl
             clang
+            llvm
           update: true
 
       - name: Build and Test Project (Windows)
