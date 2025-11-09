@@ -47,16 +47,13 @@ jobs:
         update: true
 
     - name: Bootstrap the project
-      shell: bash
-      run: |
-        perl manage boot
+      shell: ${{ runner.os == 'Windows' && 'msys2 {0}' || 'bash' }}
+      run: perl manage boot
 
     - name: Configure the project
-      shell: bash
-      run: |
-        perl manage build
+      shell: ${{ runner.os == 'Windows' && 'msys2 {0}' || 'bash' }}
+      run: perl manage build
 
-    - name: Run Tests
-      shell: bash
-      run: |
-        perl manage check
+    - name: Run tests
+      shell: ${{ runner.os == 'Windows' && 'msys2 {0}' || 'bash' }}
+      run: perl manage check
