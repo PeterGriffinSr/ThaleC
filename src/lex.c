@@ -33,7 +33,7 @@ static Lex skipWhiteSpace(Lex lex)
 {
     for (;;)
     {
-        while (isspace(*lex.current))
+        while (isspace((unsigned char)*lex.current))
         {
             if (*lex.current == '\n')
             {
@@ -77,7 +77,7 @@ static inline Token makeToken(TokenType type, char *start, Lex lex)
 static Token parseIdentifier(Lex *lex)
 {
     char *start = lex->current - 1;
-    while (isalnum(*lex->current) || *lex->current == '_')
+    while (isalnum((unsigned char)*lex->current) || *lex->current == '_')
     {
         lex->current++;
         lex->column++;
@@ -89,7 +89,7 @@ static Token parseIdentifier(Lex *lex)
 static Token parseNumber(Lex *lex)
 {
     char *start = lex->current - 1;
-    while (isdigit(*lex->current))
+    while (isdigit((unsigned char)*lex->current))
     {
         lex->current++;
         lex->column++;
@@ -100,7 +100,7 @@ static Token parseNumber(Lex *lex)
     {
         lex->current++;
         lex->column++;
-        while (isdigit(*lex->current))
+        while (isdigit((unsigned char)*lex->current))
         {
             lex->current++;
             lex->column++;
@@ -326,9 +326,9 @@ Token getNextToken(Lex *lex)
     char c = *lex->current++;
     lex->column++;
 
-    if (isalpha(c) || c == '_')
+    if (isalpha((unsigned char)c) || c == '_')
         return parseIdentifier(lex);
-    if (isdigit(c))
+    if (isdigit((unsigned char)c))
         return parseNumber(lex);
     if (c == '"')
         return parseString(lex);

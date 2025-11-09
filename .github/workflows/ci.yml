@@ -24,13 +24,12 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y autoconf automake libtool make gcc perl
 
     - name: Set up dependencies (Mac)
       if: runner.os == 'macOS'
       run: |
         brew update
-        brew install gcc autoconf automake perl
+        brew install autoconf automake
 
     - name: Set up MSYS2 and dependencies (Windows)
       if: runner.os == 'Windows'
@@ -47,50 +46,17 @@ jobs:
           clang
         update: true
 
-    - name: Bootstrap the build system (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        perl manage boot 
-
-    - name: Bootstrap the build system (Mac)
-      if: runner.os == 'macOS'
+    - name: Bootstrap the project
+      shell: bash
       run: |
         perl manage boot
 
-    - name: Bootstrap the build system (Windows)
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-        perl manage boot
-
-    - name: Configure the project (Linux)
-      if: runner.os == 'Linux'
+    - name: Configure the project
+      shell: bash
       run: |
         perl manage build
 
-    - name: Configure the project (Mac)
-      if: runner.os == 'macOS'
-      run: |
-        ./configure
-
-    - name: Configure the project (Windows)
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-        perl manage build
-
-    - name: Build the project (Linux)
-      if: runner.os == 'Linux'
+    - name: Run Tests
+      shell: bash
       run: |
         perl manage check
-
-    - name: Build the project (Mac)
-      if: runner.os == 'macOS'
-      run: |
-        perl manage check
-
-    - name: Build the project (Windows)
-      if: runner.os == 'Windows'
-      shell: msys2 {0}
-      run: |
-         perl manage check

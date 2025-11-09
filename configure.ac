@@ -21,12 +21,10 @@ COMMON_WARNINGS="-Wall -Wextra -Wshadow -Wundef -Wwrite-strings -Wredundant-decl
 
 AS_IF([test "x$enable_debug" = "xyes"],
     [
-        # Debug mode: No optimization, all warnings, debug symbols
         CFLAGS="-std=c99 -O0 -g3 $COMMON_WARNINGS -Wdouble-promotion -Wdisabled-optimization -fno-builtin-memcpy -fstack-protector-all"
         LDFLAGS="-g"
     ],
     [
-        # Release mode
         CFLAGS="-std=c99 -O2 -flto $COMMON_WARNINGS"
         LDFLAGS="-fPIC -s"
     ])
