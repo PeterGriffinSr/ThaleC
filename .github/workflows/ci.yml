@@ -33,18 +33,15 @@ jobs:
 
     - name: Set up MSYS2 and dependencies (Windows)
       if: runner.os == 'Windows'
-      uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW64
-        install: >-
-          base-devel
-          autotools
-          libtool
-          make
-          perl
-          mingw-w64-x86_64-gcc
-          clang
-        update: true
+      shell: bash
+      run: |
+        choco install -y make perl llvm
+
+        if command -v pacman &>/dev/null; then
+          pacman -S --noconfirm autoconf automake libtool
+        else
+          echo "Warning: autotools not found; ensure autoreconf is available in PATH"
+        fi
 
     - name: Bootstrap the project
       shell: ${{ runner.os == 'Windows' && 'msys2 {0}' || 'bash' }}
