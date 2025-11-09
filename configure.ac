@@ -25,7 +25,7 @@ AS_IF([test "x$enable_debug" = "xyes"],
         LDFLAGS="-g"
     ],
     [
-        CFLAGS="-std=c99 -O2 -flto $COMMON_WARNINGS"
+        CFLAGS="-std=c99 -O2 $COMMON_WARNINGS"
         LDFLAGS="-fPIC -s"
     ])
 
