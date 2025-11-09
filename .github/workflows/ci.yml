@@ -15,15 +15,14 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        shell: { msys2 {0}, bash }
+      defaults:
+        run:
+          shell: ${{ matrix.shell }}
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
-
-    - name: Set up dependencies (Linux)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
 
     - name: Set up dependencies (Mac)
       if: runner.os == 'macOS'
@@ -33,24 +32,23 @@ jobs:
 
     - name: Set up MSYS2 and dependencies (Windows)
       if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        choco install -y make
-
-        if command -v pacman &>/dev/null; then
-          pacman -S --noconfirm autoconf automake libtool perl
-        else
-          echo "Warning: autotools not found; ensure autoreconf is available in PATH"
-        fi
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW64
+        install: >-
+          base-devel
+          autotools
+          libtool
+          make
+          perl
+          clang
+        update: true
 
     - name: Bootstrap the project
-      shell: bash
       run: perl manage boot
 
     - name: Configure the project
-      shell: bash
       run: perl manage build
 
     - name: Run tests
-      shell: bash
       run: perl manage check
