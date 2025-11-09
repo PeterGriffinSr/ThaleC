@@ -43,6 +43,7 @@ jobs:
           update: true
 
       - name: Build and Test Project (Windows)
+        if: runner.os == 'Windows'
         shell: msys2 {0}
         run: |
           perl manage boot
