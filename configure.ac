@@ -26,7 +26,7 @@ AS_IF([test "x$enable_debug" = "xyes"],
     ],
     [
         CFLAGS="-std=c99 -O2 $COMMON_WARNINGS"
-        LDFLAGS="-fPIC -s"
+        LDFLAGS="-fPIC"
     ])
 
 AC_SUBST([CFLAGS])
