@@ -35,10 +35,10 @@ jobs:
       if: runner.os == 'Windows'
       shell: bash
       run: |
-        choco install -y make perl llvm
+        choco install -y make
 
         if command -v pacman &>/dev/null; then
-          pacman -S --noconfirm autoconf automake libtool
+          pacman -S --noconfirm autoconf automake libtool perl
         else
           echo "Warning: autotools not found; ensure autoreconf is available in PATH"
         fi
