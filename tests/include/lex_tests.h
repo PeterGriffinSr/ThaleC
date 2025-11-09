@@ -3,4 +3,4 @@
 
 void test_identifier(void);
 
-#endif // LEXER_TESTS_H
+#endif

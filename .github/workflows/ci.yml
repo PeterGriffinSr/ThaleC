@@ -44,6 +44,7 @@ jobs:
           make
           perl
           mingw-w64-x86_64-gcc
+          clang
         update: true
 
     - name: Bootstrap the build system (Linux)
@@ -70,7 +71,7 @@ jobs:
     - name: Configure the project (Mac)
       if: runner.os == 'macOS'
       run: |
-        ./configure CC=gcc --host=gcc
+        ./configure
 
     - name: Configure the project (Windows)
       if: runner.os == 'Windows'
