@@ -6,31 +6,39 @@ Thumbs.db
 *~
 *#
 #*#
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# === Build artifacts ===
-!*.c
-!*.h
-!*.md
-!*.txt
-!*.thl
-!.gitkeep
-!*/
+# Ignore compiled binaries, object files, libraries
 *.exe
 *.o
 *.a
-*.in
+*.so
+*.dll
+*.dylib
 
-# === Build system caches ===
+# === Build system caches / auto-generated ===
 autom4te.cache/
 .cache/
 .deps/
-.vscode/
-latex/
-*.dirstamp
 configure
 aclocal.m4
+Makefile
+Makefile.in
+*.dirstamp
+
+# === Documentation / output ===
+latex/
+html/
 
 # === Logs & Temporary files ===
 *.log
 *.status
 *.trs
+*.tmp
+*.bak
+
+## === Nix Files ===
+*.nix

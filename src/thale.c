@@ -1,3 +1,16 @@
+/**
+ * @file thale.c
+ * @brief Main entry point for the Thale compiler.
+ *
+ * This file contains the main function and initialization logic for the
+ * Thale compiler. It handles command-line arguments, sets up the
+ * environment, and starts the compilation process.
+ *
+ * @author Codezz-ops <codezz-ops@protonmail.com>
+ *
+ * @copyright Copyright (c) 2025 Codezz-ops
+ */
+
 #ifdef _WIN32
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -8,6 +21,17 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+/**
+ * @brief The main entry point of the Thale compiler.
+ *
+ * This function processes command-line arguments, opens the input file,
+ * reads its contents into memory, initializes the lexer, and retrieves
+ * tokens from the source code until the end of the file is reached.
+ *
+ * @param argc The number of command-line arguments.
+ * @param argv An array of command-line argument strings.
+ * @return int Returns EXIT_SUCCESS on successful execution, or EXIT_FAILURE on error.
+ */
 int main(int argc, char *argv[])
 {
     if (argc < 2)

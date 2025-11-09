@@ -1,12 +1,40 @@
+/**
+ * @file lex.c
+ * @brief Implements the lexer for the Thale programming language.
+ *
+ * This file is responsible for tokenizing the source code into meaningful symbols
+ * for further processing. It handles various language constructs and keywords,
+ * ensuring accurate parsing and syntax analysis.
+ *
+ * @author Codezz-ops <codezz-ops@protonmail.com>
+ *
+ * @copyright Copyright (c) 2025 Codezz-ops
+ */
+
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "error.h"
 
+/**
+ * @brief Array of keywords recognized by the lexer.
+ *
+ * Each entry maps a string keyword to its corresponding TokenType.
+ */
 static const KeywordEntry kw[] = {
     {"Char", Char}, {"False", False}, {"Float", Float}, {"Int", Int}, {"let", Let}, {"List", List}, {"match", Match}, {"True", True}, {"type", Type}, {"Unit", Unit}, {"with", With}, {"String", String}, {"effect", Effect}};
 
+/**
+ * @brief Checks if a given identifier matches a reserved keyword.
+ *
+ * Compares the input string with the known keyword list and returns
+ * the corresponding TokenType if a match is found, otherwise returns Identifier.
+ *
+ * @param start Pointer to the beginning of the identifier string.
+ * @param length Length of the identifier string.
+ * @return TokenType The token type corresponding to the keyword or Identifier.
+ */
 static TokenType checkKeyword(const char *start, size_t length)
 {
     for (size_t i = 0; i < sizeof(kw) / sizeof(kw[0]); i++)
@@ -19,6 +47,14 @@ static TokenType checkKeyword(const char *start, size_t length)
     return Identifier;
 }
 
+/**
+ * @brief Initializes the lexer state.
+ *
+ * Sets the starting position, current position, line, and column of the lexer.
+ *
+ * @param lex Pointer to the lexer to initialize.
+ * @param source The source code string to tokenize.
+ */
 void initLex(Lex *lex, char *source)
 {
     if (!source)
@@ -29,6 +65,15 @@ void initLex(Lex *lex, char *source)
     lex->column = 1;
 }
 
+/**
+ * @brief Skips whitespace and comments in the source code.
+ *
+ * Advances the lexer's current pointer past spaces, tabs, newlines,
+ * and single-line comments starting with "--".
+ *
+ * @param lex The lexer to advance.
+ * @return Lex The updated lexer state after skipping whitespace.
+ */
 static Lex skipWhiteSpace(Lex lex)
 {
     for (;;)
@@ -64,6 +109,14 @@ static Lex skipWhiteSpace(Lex lex)
     return lex;
 }
 
+/**
+ * @brief Constructs a Token from the lexer state.
+ *
+ * @param type The type of the token.
+ * @param start Pointer to the start of the token in the source code.
+ * @param lex Current state of the lexer.
+ * @return Token The newly created token.
+ */
 static inline Token makeToken(TokenType type, char *start, Lex lex)
 {
     return (Token){
@@ -74,6 +127,15 @@ static inline Token makeToken(TokenType type, char *start, Lex lex)
         .column = lex.column};
 }
 
+/**
+ * @brief Parses an identifier or keyword from the source code.
+ *
+ * Advances the lexer over alphanumeric characters and underscores,
+ * then checks if the result is a keyword.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @return Token The parsed identifier or keyword token.
+ */
 static Token parseIdentifier(Lex *lex)
 {
     char *start = lex->current - 1;
@@ -86,6 +148,12 @@ static Token parseIdentifier(Lex *lex)
     return makeToken(type, start, *lex);
 }
 
+/**
+ * @brief Parses an integer or floating-point number literal.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @return Token The parsed numeric literal token (IntLiteral or FloatLiteral).
+ */
 static Token parseNumber(Lex *lex)
 {
     char *start = lex->current - 1;
@@ -111,6 +179,15 @@ static Token parseNumber(Lex *lex)
     return makeToken(type, start, *lex);
 }
 
+/**
+ * @brief Parses a string literal.
+ *
+ * Handles escape sequences and reports lexical errors for invalid
+ * escapes or unterminated strings.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @return Token The parsed string literal token or an Unknown token on error.
+ */
 static Token parseString(Lex *lex)
 {
     char *start = lex->current - 1;
@@ -176,6 +253,15 @@ static Token parseString(Lex *lex)
     return tok;
 }
 
+/**
+ * @brief Parses a character literal.
+ *
+ * Handles escape sequences and reports errors for invalid escapes
+ * or unterminated character literals.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @return Token The parsed char literal token or an Unknown token on error.
+ */
 static Token parseChar(Lex *lex)
 {
     char *start = lex->current - 1;
@@ -231,6 +317,16 @@ static Token parseChar(Lex *lex)
     return tok;
 }
 
+/**
+ * @brief Parses a single-character or compound symbol token.
+ *
+ * Handles operators and punctuation such as +, -, &&, ||, ::, etc.
+ * Reports an Unknown token error if the symbol is unrecognized.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @param c The current character to parse as a symbol.
+ * @return Token The parsed symbol token or an Unknown token on error.
+ */
 static Token parseSymbol(Lex *lex, char c)
 {
     char *start = lex->current - 1;
@@ -316,6 +412,15 @@ static Token parseSymbol(Lex *lex, char c)
     }
 }
 
+/**
+ * @brief Retrieves the next token from the source code.
+ *
+ * Skips whitespace and comments, then determines the type of the next
+ * token and delegates to the appropriate parsing function.
+ *
+ * @param lex Pointer to the lexer to advance.
+ * @return Token The next token in the source code.
+ */
 Token getNextToken(Lex *lex)
 {
     *lex = skipWhiteSpace(*lex);
