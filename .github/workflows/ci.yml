@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        shell: { msys2 {0}, bash }
+        shell: [msys2 {0}, bash]
       defaults:
         run:
           shell: ${{ matrix.shell }}
