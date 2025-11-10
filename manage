@@ -4,20 +4,22 @@ use warnings;
 use Term::ANSIColor;
 use File::Spec::Functions qw(catfile);
 use File::Path            qw(remove_tree);
+use File::HomeDir;
 use POSIX ":sys_wait_h";
 use Getopt::Long;
 use Cwd qw(getcwd);
 
-my $VERBOSE = 0;
+my $VERBOSE    = 0;
+my $START_TIME = time();
+my $CWD        = getcwd();
+my $HOME       = File::HomeDir->my_home;
+my $OS         = $^O;
+my $IS_WINDOWS = $OS eq 'MSWin32';
+my $NULL       = $IS_WINDOWS ? 'NUL' : '/dev/null';
+
 GetOptions( "verbose" => \$VERBOSE );
 
-my $start_time = time();
-my $cwd        = getcwd();
-
-sub timestamp {
-    my @t = localtime();
-    return sprintf( "[%02d:%02d:%02d]", $t[2], $t[1], $t[0] );
-}
+sub timestamp { sprintf "[%02d:%02d:%02d]", ( localtime() )[ 2, 1, 0 ] }
 
 sub log_line {
     my ( $color, $tag, $msg ) = @_;
@@ -28,19 +30,16 @@ sub log_line {
 sub info  { log_line( 'green',  'INFO',  "@_" ); }
 sub warn  { log_line( 'yellow', 'WARN',  "@_" ); }
 sub error { log_line( 'red',    'ERROR', "@_" ); }
-sub diex  { error(@_); exit 1 }
+sub diex  { error(@_); exit 1; }
 
 sub section {
-    my ($title) = @_;
-    print color('cyan'), "\n=== $title ===\n", color('reset');
+    print color('cyan'), "\n=== ", shift, " ===\n", color('reset');
 }
 
 sub run {
     my ( $cmd, $dir ) = @_;
     $dir ||= '.';
-
-    my $null        = $^O eq 'MSWin32' ? 'NUL' : '/dev/null';
-    my $verbose_cmd = $VERBOSE         ? ""    : " > $null 2>&1";
+    my $verbose_cmd = $VERBOSE ? "" : " > $NULL 2>&1";
 
     info("($dir) $cmd") if $VERBOSE;
 
@@ -58,20 +57,17 @@ sub run {
             error("Command failed, showing output: $cmd");
             system( "sh", "-c", $cmd );
         }
-        error("Command failed: $cmd (exit code $exit)");
-        exit $exit;
+        diex("Command failed: $cmd (exit code $exit)");
     }
-
     return $exit;
 }
 
 sub boot {
     section "Bootstrapping Project";
     my @dirs = ( '.', 'src' );
-    my $os   = $^O;
     my $cmd  = 'autoreconf -i';
 
-    if ( $os eq 'MSWin32' ) {
+    if ($IS_WINDOWS) {
         info "Detected Windows environment";
         my $ac = $ENV{ACLOCAL_PATH} // '';
         $ac =~ s/;/:/g;
@@ -79,38 +75,30 @@ sub boot {
         $ac =~ s|([A-Za-z]):/|/$1/|g;
         $cmd = "ACLOCAL_PATH=$ac autoreconf -i";
     }
-
-    if ( $os eq 'darwin' ) {
+    elsif ( $OS eq 'darwin' ) {
         info "Detected macOS, performing additional setup...";
         run("aclocal");
         run("autoheader");
 
         for my $d (@dirs) {
-            if ( -f catfile( $d, "configure.ac" ) ) {
-                run( "automake --add-missing", $d );
-            }
+            run( "automake --add-missing", $d )
+              if -f catfile( $d, "configure.ac" );
         }
     }
 
-    my $fail = 0;
     for my $d (@dirs) {
         next unless -f catfile( $d, "configure.ac" );
         info "Running autoreconf in $d...";
-        my $code = run( $cmd, $d );
-        $fail ||= $code != 0;
+        run( $cmd, $d );
     }
 
-    $fail
-      ? diex "Autoreconf failed"
-      : info "Autoreconf completed successfully.";
+    info "Autoreconf completed successfully.";
 }
 
 sub clean {
     section "Cleaning Project";
 
-    if ( -e "Makefile" ) {
-        run("make clean");
-    }
+    run("make clean") if -e "Makefile";
 
     my @targets = qw(
       autom4te.cache config.log config.status Makefile Makefile.in
@@ -123,8 +111,7 @@ sub clean {
 
     for my $t (@targets) {
         next unless -e $t;
-        if   ( -d $t ) { remove_tree($t); }
-        else           { unlink $t; }
+        -d $t ? remove_tree($t) : unlink $t;
         info("Removed $t") if $VERBOSE;
     }
 
@@ -144,28 +131,105 @@ sub check {
     info "All tests passed.";
 }
 
-sub rebuild {
-    section "Full Rebuild";
-    clean();
-    build();
+sub rebuild { section "Full Rebuild"; clean(); build(); }
+
+sub install {
+    section "Installing Thale";
+    my $prefix  = "$HOME/.thale";
+    my $bin_dir = "$prefix/bin";
+
+    run("make install prefix=$prefix");
+    info "Installed Thale to $bin_dir";
+    add_to_path($bin_dir);
+}
+
+sub uninstall {
+    section "Uninstalling Thale";
+    my $prefix  = "$HOME/.thale";
+    my $bin_dir = "$prefix/bin";
+
+    run("make uninstall prefix=$prefix");
+    info "Uninstalled Thale";
+
+    remove_from_path($bin_dir);
+    remove_tree($prefix) if -d $prefix;
+    info "Removed directory $prefix";
+}
+
+sub remove_from_path {
+    my ($bin_dir) = @_;
+    info "Removing $bin_dir from PATH...";
+
+    if ($IS_WINDOWS) {
+        my $ps_cmd = qq{
+            \$old = [Environment]::GetEnvironmentVariable('Path','User');
+            if (\$old) {
+                \$new = (\$old -split ';') | Where-Object { \$_ -ne '$bin_dir' -and \$_ -ne '' };
+                [Environment]::SetEnvironmentVariable('Path', (\$new -join ';'),'User');
+            }
+        };
+        system( "powershell", "-NoProfile", "-Command", $ps_cmd ) == 0
+          ? info "Removed $bin_dir from user PATH"
+          : &warn("Could not update PATH automatically on Windows.");
+    }
+    else {
+        my @rc_files =
+          grep { -f $_ } ( "$HOME/.bashrc", "$HOME/.zshrc", "$HOME/.profile" );
+        my $escaped = quotemeta($bin_dir);
+        foreach my $rc (@rc_files) {
+            open my $in, '<', $rc or next;
+            my @lines = <$in>;
+            close $in;
+
+            my @filtered = grep { $_ !~ /$escaped/ } @lines;
+            next if @filtered == @lines;
+
+            open my $out, '>', $rc or next;
+            print $out @filtered;
+            close $out;
+            info "Removed $bin_dir from PATH in $rc";
+        }
+        info "PATH cleanup complete.";
+    }
+}
+
+sub add_to_path {
+    my ($bin_path) = @_;
+
+    if ($IS_WINDOWS) {
+        system( "powershell", "-NoProfile", "-Command",
+"[Environment]::SetEnvironmentVariable('Path', \$env:Path + ';$bin_path', 'User')"
+        );
+        info "Added $bin_path to PATH";
+    }
+    else {
+        my $shell_rc =
+            $ENV{SHELL} =~ /zsh/  ? "$HOME/.zshrc"
+          : $ENV{SHELL} =~ /fish/ ? "$HOME/.config/fish/config.fish"
+          :                         "$HOME/.bashrc";
+
+        open my $fh, '>>', $shell_rc or &warn("Cannot open $shell_rc: $!");
+        print $fh
+          "\n# Added by Thale installer\nexport PATH=\"$bin_path:\$PATH\"\n";
+        close $fh;
+        info "Added $bin_path to PATH in $shell_rc";
+    }
 }
 
 my %commands = (
-    boot    => \&boot,
-    clean   => \&clean,
-    build   => \&build,
-    check   => \&check,
-    rebuild => \&rebuild,
+    boot      => \&boot,
+    clean     => \&clean,
+    build     => \&build,
+    check     => \&check,
+    rebuild   => \&rebuild,
+    install   => \&install,
+    uninstall => \&uninstall,
 );
 
 my $cmd = shift // 'boot';
-if ( exists $commands{$cmd} ) {
-    $commands{$cmd}->();
-}
-else {
-    diex
-"Unknown command: '$cmd'\nUsage: $0 [boot|clean|build|check|rebuild] [--verbose]";
-}
+exists $commands{$cmd}
+  ? $commands{$cmd}->()
+  : diex
+"Unknown command: '$cmd'\nUsage: $0 [boot|clean|build|check|rebuild|install|uninstall] [--verbose]";
 
-my $elapsed = time() - $start_time;
-info sprintf( "Completed in %ds", $elapsed );
+info sprintf( "Completed in %ds", time() - $START_TIME );
