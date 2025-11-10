@@ -4,7 +4,6 @@ use warnings;
 use Term::ANSIColor;
 use File::Spec::Functions qw(catfile);
 use File::Path            qw(remove_tree);
-use File::HomeDir;
 use POSIX ":sys_wait_h";
 use Getopt::Long;
 use Cwd qw(getcwd);
@@ -12,7 +11,7 @@ use Cwd qw(getcwd);
 my $VERBOSE    = 0;
 my $START_TIME = time();
 my $CWD        = getcwd();
-my $HOME       = File::HomeDir->my_home;
+my $HOME       = $ENV{HOME} || $ENV{USERPROFILE};
 my $OS         = $^O;
 my $IS_WINDOWS = $OS eq 'MSWin32';
 my $NULL       = $IS_WINDOWS ? 'NUL' : '/dev/null';
@@ -42,8 +41,8 @@ sub run {
     my $verbose_cmd = $VERBOSE ? "" : " > $NULL 2>&1";
 
     info("($dir) $cmd") if $VERBOSE;
-
-    my $pid = fork();
+    my $HOME = $ENV{HOME} || $ENV{USERPROFILE};
+    my $pid  = fork();
     if ( $pid == 0 ) {
         chdir $dir or diex "Failed to cd into $dir: $!";
         exec "sh", "-c", $cmd . $verbose_cmd or diex "Exec failed: $!";
