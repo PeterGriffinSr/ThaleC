@@ -83,6 +83,8 @@ sub boot {
     if ( $os eq 'darwin' ) {
         info "Detected macOS, performing additional setup...";
         run("aclocal");
+        run("autoheader");
+
         for my $d (@dirs) {
             if ( -f catfile( $d, "configure.ac" ) ) {
                 run( "automake --add-missing", $d );
