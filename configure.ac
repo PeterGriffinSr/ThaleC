@@ -1,5 +1,6 @@
 AC_INIT([ThaleCompiler], [0.0.1.0], [https://example.com])
 AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_HEADERS([source/include/config.h])
 AC_CONFIG_MACRO_DIRS([m4])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 

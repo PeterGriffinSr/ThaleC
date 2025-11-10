@@ -16,6 +16,7 @@
 #endif
 
 #include "lex.h"
+#include "help.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -39,6 +40,10 @@ int main(int argc, char *argv[])
         fputs("thale: error: no input file.\n", stderr);
         return EXIT_FAILURE;
     }
+
+    int dispatch = dispatchCommand(argc, argv);
+    if (dispatch != -1)
+        return dispatch;
 
     long length;
     FILE *file;

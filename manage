@@ -39,19 +39,26 @@ sub run {
     my ( $cmd, $dir ) = @_;
     $dir ||= '.';
 
-    info "($dir) $cmd" if $VERBOSE;
-    my $pid = fork();
+    my $null        = $^O eq 'MSWin32' ? 'NUL' : '/dev/null';
+    my $verbose_cmd = $VERBOSE         ? ""    : " > $null 2>&1";
 
+    info("($dir) $cmd") if $VERBOSE;
+
+    my $pid = fork();
     if ( $pid == 0 ) {
         chdir $dir or diex "Failed to cd into $dir: $!";
-        exec "sh", "-c", $cmd or diex "Exec failed: $!";
+        exec "sh", "-c", $cmd . $verbose_cmd or diex "Exec failed: $!";
     }
 
     waitpid( $pid, 0 );
     my $exit = $? >> 8;
 
     if ( $exit != 0 ) {
-        error "Command failed: $cmd (exit code $exit)";
+        if ( !$VERBOSE ) {
+            error("Command failed, showing output: $cmd");
+            system( "sh", "-c", $cmd );
+        }
+        error("Command failed: $cmd (exit code $exit)");
         exit $exit;
     }
 
@@ -98,24 +105,25 @@ sub boot {
 
 sub clean {
     section "Cleaning Project";
+
+    if ( -e "Makefile" ) {
+        run("make clean");
+    }
+
     my @targets = qw(
       autom4te.cache config.log config.status Makefile Makefile.in
-      src/.deps src/Makefile src/Makefile.in
+      source/.deps source/Makefile source/Makefile.in
+      source/include/config.h.in source/include/config.h source/include/stamp-h1
       tests/.deps tests/Makefile tests/Makefile.in
       configure aclocal.m4
       config/compile config/depcomp config/install-sh config/missing config/test-driver
     );
 
-    if ( -e "Makefile" ) {
-        info "Running make clean...";
-        system( "make", "clean" );
-    }
-
     for my $t (@targets) {
         next unless -e $t;
         if   ( -d $t ) { remove_tree($t); }
         else           { unlink $t; }
-        info "Removed $t" if $VERBOSE;
+        info("Removed $t") if $VERBOSE;
     }
 
     info "Cleanup complete.";
