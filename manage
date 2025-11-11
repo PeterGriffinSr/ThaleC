@@ -15,6 +15,8 @@ my $HOME       = $ENV{HOME} || $ENV{USERPROFILE};
 my $OS         = $^O;
 my $IS_WINDOWS = $OS eq 'MSWin32';
 my $NULL       = $IS_WINDOWS ? 'NUL' : '/dev/null';
+my $PREFIX     = "$HOME/.thale";
+my $BIN_DIR    = "$PREFIX/bin";
 
 GetOptions( "verbose" => \$VERBOSE );
 
@@ -41,8 +43,7 @@ sub run {
     my $verbose_cmd = $VERBOSE ? "" : " > $NULL 2>&1";
 
     info("($dir) $cmd") if $VERBOSE;
-    my $HOME = $ENV{HOME} || $ENV{USERPROFILE};
-    my $pid  = fork();
+    my $pid = fork();
     if ( $pid == 0 ) {
         chdir $dir or diex "Failed to cd into $dir: $!";
         exec "sh", "-c", $cmd . $verbose_cmd or diex "Exec failed: $!";
@@ -134,25 +135,21 @@ sub rebuild { section "Full Rebuild"; clean(); build(); }
 
 sub install {
     section "Installing Thale";
-    my $prefix  = "$HOME/.thale";
-    my $bin_dir = "$prefix/bin";
 
-    run("make install prefix=$prefix");
-    info "Installed Thale to $bin_dir";
-    add_to_path($bin_dir);
+    run("make install prefix=$PREFIX");
+    info "Installed Thale to $BIN_DIR";
+    add_to_path($BIN_DIR);
 }
 
 sub uninstall {
     section "Uninstalling Thale";
-    my $prefix  = "$HOME/.thale";
-    my $bin_dir = "$prefix/bin";
 
-    run("make uninstall prefix=$prefix");
+    run("make uninstall prefix=$PREFIX");
     info "Uninstalled Thale";
 
-    remove_from_path($bin_dir);
-    remove_tree($prefix) if -d $prefix;
-    info "Removed directory $prefix";
+    remove_from_path($BIN_DIR);
+    remove_tree($PREFIX) if -d $PREFIX;
+    info "Removed directory $PREFIX";
 }
 
 sub remove_from_path {

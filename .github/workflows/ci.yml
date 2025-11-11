@@ -49,6 +49,7 @@ jobs:
           perl manage boot
           perl manage build
           perl manage check
+          perl manage install
 
       - name: Build and Test Project
         if: runner.os != 'Windows'
@@ -56,3 +57,4 @@ jobs:
           perl manage boot
           perl manage build
           perl manage check
+          perl manage install
