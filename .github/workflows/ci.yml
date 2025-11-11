@@ -14,11 +14,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up dependencies
         run: |
@@ -59,21 +59,21 @@ jobs:
           perl manage check
           perl manage install
 
-    cmake-windows:
-      name: Windows (Native)
-      runs-on: windows-latest
+  cmake-windows:
+    name: Windows (Native)
+    runs-on: windows-latest
 
-      steps:
-        - name: Checkout repository
-          uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-        - name: Set up CMake
-          uses: jwlawson/actions-setup-cmake@v2
-          with:
-            cmake-version: latest
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: latest
 
-        - name:  Build and Test Project
-          run: |
-            cmake -S . -B build
-            cmake --build build
-            ctest --test-dir build --output-on-failure
+      - name: Build and Test Project
+        run: |
+          cmake -S . -B build
+          cmake --build build
+          ctest --test-dir build --output-on-failure
