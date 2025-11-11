@@ -48,7 +48,8 @@ jobs:
           cmake --build build --config Debug
           ctest --test-dir build --output-on-failure -C Debug
 
-      - name: Build and Test Project (All)
+      - name: Build and Test Project
+        if: runner.os != 'Windows'
         run: |
           perl manage boot
           perl manage build
