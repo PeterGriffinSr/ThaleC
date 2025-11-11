@@ -15,6 +15,16 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifndef THALE_VERSION
+#ifdef VERSION
+#define THALE_DISPLAY_VERSION VERSION
+#else
+#define THALE_DISPLAY_VERSION "unknown"
+#endif
+#else
+#define THALE_DISPLAY_VERSION THALE_VERSION
+#endif
+
 /**
  * @brief Handles the `--help` or `-h` command.
  *
@@ -37,7 +47,7 @@ int handleHelp(void)
  */
 int handleVersion(void)
 {
-    printf("Thale Compiler %s\n", VERSION);
+    printf("Thale Compiler %s\n", THALE_DISPLAY_VERSION);
     return EXIT_SUCCESS;
 }
 

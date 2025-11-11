@@ -28,6 +28,7 @@ aclocal.m4
 Makefile
 Makefile.in
 *.dirstamp
+build/
 
 # === Documentation / output ===
 latex/
