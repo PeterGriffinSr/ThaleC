@@ -49,6 +49,7 @@ jobs:
           update: true
 
       - name: Build and Test Project (Windows Native)
+        if: runner.os == 'Windows'
         run: |
           cmake -S . -B build -G "Visual Studio 17 2022" 
           cmake --build build --config Debug
