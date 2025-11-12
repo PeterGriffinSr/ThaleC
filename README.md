@@ -11,7 +11,7 @@
 ## Getting Started
 Create a new Thale script with the `.thl` extension. Here's a basic example:
 ```thl
-effect Console { print : String -> () }
+effect Console { print }
 
 main : Effect ()
 main -> Console.print "Hello, world!"
