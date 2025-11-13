@@ -1,0 +1,15 @@
+<map id="reportError" name="reportError">
+<area shape="rect" id="Node000001" title="Reports an error with a specific message and token information." alt="" coords="421,55,513,80"/>
+<area shape="rect" id="Node000002" href="$lex_8c.html#a0c29e0f8a7743394d8c1326f45a831df" title="Parses a character literal." alt="" coords="276,5,364,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="415,53,358,33,360,28,417,48"/>
+<area shape="rect" id="Node000005" href="$lex_8c.html#a2284022e8dceb5ae11619e0a1d92ddeb" title="Parses a string literal." alt="" coords="272,55,368,80"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="408,70,368,70,368,65,408,65"/>
+<area shape="rect" id="Node000006" href="$lex_8c.html#a3d980411d91ac01143b6d050656176ed" title="Parses a single&#45;character or compound symbol token." alt="" coords="267,104,373,129"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="417,87,360,106,358,101,415,82"/>
+<area shape="rect" id="Node000003" href="$lex_8c.html#a38724f2e1da8e6a167f466594f36afda" title="Retrieves the next token from the lexer." alt="" coords="108,55,219,80"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="267,37,206,57,204,52,265,32"/>
+<area shape="rect" id="Node000004" href="$thale_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="The main entry point of the Thale compiler." alt="" coords="5,55,60,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="94,70,60,70,60,65,94,65"/>
+<area shape="poly" id="edge5_Node000005_Node000003" title=" " alt="" coords="258,70,219,70,219,65,258,65"/>
+<area shape="poly" id="edge7_Node000006_Node000003" title=" " alt="" coords="265,102,204,83,206,78,267,97"/>
+</map>

@@ -1,0 +1,17 @@
+<map id="errorTypeToString" name="errorTypeToString">
+<area shape="rect" id="Node000001" title="Converts an ErrorType to its corresponding string representation." alt="" coords="561,55,696,80"/>
+<area shape="rect" id="Node000002" href="$error_8c.html#ac18b3eeb8b7759aed988843a51bdb6e8" title="Prints an error message to stderr with context information." alt="" coords="421,55,513,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="547,70,514,70,514,65,547,65"/>
+<area shape="rect" id="Node000003" href="$lex_8c.html#a0c29e0f8a7743394d8c1326f45a831df" title="Parses a character literal." alt="" coords="276,5,364,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="415,53,358,33,360,28,417,48"/>
+<area shape="rect" id="Node000006" href="$lex_8c.html#a2284022e8dceb5ae11619e0a1d92ddeb" title="Parses a string literal." alt="" coords="272,55,368,80"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="408,70,368,70,368,65,408,65"/>
+<area shape="rect" id="Node000007" href="$lex_8c.html#a3d980411d91ac01143b6d050656176ed" title="Parses a single&#45;character or compound symbol token." alt="" coords="267,104,373,129"/>
+<area shape="poly" id="edge7_Node000002_Node000007" title=" " alt="" coords="417,87,360,106,358,101,415,82"/>
+<area shape="rect" id="Node000004" href="$lex_8c.html#a38724f2e1da8e6a167f466594f36afda" title="Retrieves the next token from the lexer." alt="" coords="108,55,219,80"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="267,37,206,57,204,52,265,32"/>
+<area shape="rect" id="Node000005" href="$thale_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="The main entry point of the Thale compiler." alt="" coords="5,55,60,80"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="94,70,60,70,60,65,94,65"/>
+<area shape="poly" id="edge6_Node000006_Node000004" title=" " alt="" coords="258,70,219,70,219,65,258,65"/>
+<area shape="poly" id="edge8_Node000007_Node000004" title=" " alt="" coords="265,102,204,83,206,78,267,97"/>
+</map>

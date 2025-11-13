@@ -1,0 +1,30 @@
+<map id="getNextToken" name="getNextToken">
+<area shape="rect" id="Node000001" title="Retrieves the next token from the source code." alt="" coords="5,156,116,181"/>
+<area shape="rect" id="Node000002" href="$lex_8c.html#a11716a779431cc8450113551f625d4e5" title="Constructs a Token from the lexer state." alt="" coords="349,131,444,156"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="106,153,164,142,254,136,335,137,335,143,254,142,164,147,107,159"/>
+<area shape="rect" id="Node000003" href="$lex_8c.html#a0c29e0f8a7743394d8c1326f45a831df" title="Parses a character literal." alt="" coords="183,156,271,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="116,166,170,166,170,171,116,171"/>
+<area shape="rect" id="Node000006" href="$lex_8c.html#ace28c31e3b5d55c67d5b5fb023b97c1a" title="Parses an identifier or keyword from the source code." alt="" coords="169,5,285,31"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="67,154,103,100,131,68,162,40,170,35,173,39,166,44,135,72,108,103,71,157"/>
+<area shape="rect" id="Node000008" href="$lex_8c.html#a4db515211be4793f3597cd3de1130973" title="Parses an integer or floating&#45;point number literal." alt="" coords="172,55,283,80"/>
+<area shape="poly" id="edge9_Node000001_Node000008" title=" " alt="" coords="78,154,163,97,186,84,189,89,165,102,81,158"/>
+<area shape="rect" id="Node000009" href="$lex_8c.html#a2284022e8dceb5ae11619e0a1d92ddeb" title="Parses a string literal." alt="" coords="179,205,275,231"/>
+<area shape="poly" id="edge11_Node000001_Node000009" title=" " alt="" coords="105,179,171,199,170,204,103,184"/>
+<area shape="rect" id="Node000010" href="$lex_8c.html#a3d980411d91ac01143b6d050656176ed" title="Parses a single&#45;character or compound symbol token." alt="" coords="174,255,281,280"/>
+<area shape="poly" id="edge14_Node000001_Node000010" title=" " alt="" coords="79,180,117,210,165,241,177,247,174,251,163,246,114,214,75,184"/>
+<area shape="rect" id="Node000011" href="$lex_8c.html#ac3b7050654f549402985b9631f7399e2" title="Skips whitespace and comments in the source code." alt="" coords="164,304,291,329"/>
+<area shape="poly" id="edge17_Node000001_Node000011" title=" " alt="" coords="72,180,108,233,135,264,166,291,173,295,170,300,162,295,131,267,104,236,67,183"/>
+<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="271,160,335,150,336,155,272,165"/>
+<area shape="rect" id="Node000004" href="$error_8c.html#ac18b3eeb8b7759aed988843a51bdb6e8" title="Prints an error message to stderr with context information." alt="" coords="351,205,443,231"/>
+<area shape="poly" id="edge4_Node000003_Node000004" title=" " alt="" coords="272,179,339,199,338,204,271,184"/>
+<area shape="rect" id="Node000005" href="$error_8c.html#add153ce9523438942a9050da6cf5e158" title="Converts an ErrorType enum to a string representation." alt="" coords="503,205,637,231"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="443,215,489,215,489,221,443,221"/>
+<area shape="poly" id="edge8_Node000006_Node000002" title=" " alt="" coords="270,28,292,40,340,79,378,118,374,122,337,83,289,44,267,33"/>
+<area shape="rect" id="Node000007" href="$lex_8c.html#a65f4a4625833d9db46a26513427eb6c6" title="Checks if a given identifier matches a reserved keyword." alt="" coords="339,5,455,31"/>
+<area shape="poly" id="edge7_Node000006_Node000007" title=" " alt="" coords="286,15,325,15,325,21,286,21"/>
+<area shape="poly" id="edge10_Node000008_Node000002" title=" " alt="" coords="258,78,356,123,354,127,255,82"/>
+<area shape="poly" id="edge12_Node000009_Node000002" title=" " alt="" coords="262,203,290,192,357,160,359,165,292,196,264,208"/>
+<area shape="poly" id="edge13_Node000009_Node000004" title=" " alt="" coords="276,215,337,215,337,221,276,221"/>
+<area shape="poly" id="edge15_Node000010_Node000002" title=" " alt="" coords="268,252,289,241,314,218,337,192,368,163,372,167,341,196,318,222,292,246,271,257"/>
+<area shape="poly" id="edge16_Node000010_Node000004" title=" " alt="" coords="271,252,338,232,339,237,272,257"/>
+</map>

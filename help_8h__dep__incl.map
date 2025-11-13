@@ -1,0 +1,7 @@
+<map id="source/include/help.h" name="source/include/help.h">
+<area shape="rect" id="Node000001" title="Defines the command&#45;line help functionality for the Thale compiler." alt="" coords="46,5,206,31"/>
+<area shape="rect" id="Node000002" href="$help_8c.html" title="Implements the command&#45;line functionality for the Thale compiler." alt="" coords="5,79,113,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="107,43,72,80,68,77,104,39"/>
+<area shape="rect" id="Node000003" href="$thale_8c.html" title="Main entry point for the Thale compiler." alt="" coords="137,79,251,104"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="148,39,185,77,181,80,145,42"/>
+</map>

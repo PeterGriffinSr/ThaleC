@@ -1,0 +1,7 @@
+<map id="parseIdentifier" name="parseIdentifier">
+<area shape="rect" id="Node000001" title="Parses an identifier or keyword from the source code." alt="" coords="5,31,121,56"/>
+<area shape="rect" id="Node000002" href="$lex_8c.html#a65f4a4625833d9db46a26513427eb6c6" title="Checks if a given identifier matches a reserved keyword." alt="" coords="169,5,285,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="121,32,155,26,156,32,122,37"/>
+<area shape="rect" id="Node000003" href="$lex_8c.html#a11716a779431cc8450113551f625d4e5" title="Constructs a Token from the lexer state." alt="" coords="180,55,275,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="122,49,167,56,166,61,121,54"/>
+</map>

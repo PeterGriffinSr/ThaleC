@@ -1,0 +1,5 @@
+<map id="handleHelp" name="handleHelp">
+<area shape="rect" id="Node000001" title="Handles the &#45;&#45;help or &#45;h command." alt="" coords="5,5,101,31"/>
+<area shape="rect" id="Node000002" href="$help_8c.html#a3d4a924cff71a4caf3cfd637e41573df" title="Prints the help menu to stdout." alt="" coords="149,5,268,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,15,136,15,136,21,102,21"/>
+</map>

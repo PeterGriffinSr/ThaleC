@@ -1,0 +1,7 @@
+<map id="dispatchCommand" name="dispatchCommand">
+<area shape="rect" id="Node000001" title="Dispatches a command based on argv input." alt="" coords="5,5,149,31"/>
+<area shape="rect" id="Node000002" href="$help_8c.html#a30c681386b76af583b0cc5e091a69eb1" title="Handles the &#45;&#45;help or &#45;h command." alt="" coords="197,5,293,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="150,15,183,15,183,21,150,21"/>
+<area shape="rect" id="Node000003" href="$help_8c.html#a3d4a924cff71a4caf3cfd637e41573df" title="Prints the help menu to stdout." alt="" coords="341,5,460,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="294,15,328,15,328,21,294,21"/>
+</map>

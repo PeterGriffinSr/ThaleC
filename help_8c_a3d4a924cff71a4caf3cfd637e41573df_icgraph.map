@@ -1,0 +1,9 @@
+<map id="printHelpMenu" name="printHelpMenu">
+<area shape="rect" id="Node000001" title="Prints the help menu to stdout." alt="" coords="444,5,563,31"/>
+<area shape="rect" id="Node000002" href="$help_8c.html#a30c681386b76af583b0cc5e091a69eb1" title="Handles the &#45;&#45;help or &#45;h command." alt="" coords="300,5,396,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="430,21,396,21,396,15,430,15"/>
+<area shape="rect" id="Node000003" href="$help_8c.html#aa5c19400a03d081b4e10bf74a7e4c479" title="Dispatches a command based on the first argument." alt="" coords="108,5,252,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="286,21,252,21,252,15,286,15"/>
+<area shape="rect" id="Node000004" href="$thale_8c.html#a0ddf1224851353fc92bfbff6f499fa97" title="The main entry point of the Thale compiler." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>
