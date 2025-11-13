@@ -31,9 +31,7 @@ if (ENABLE_DEBUG)
     message(STATUS "Building in DEBUG mode")
     add_compile_options(
         ${COMMON_WARNINGS}
-        /Od
         /Zi
-        /RTC1
         /DDEBUG
         /MDd
     )
